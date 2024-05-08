@@ -9,11 +9,15 @@ https://medium.com/@shubhamdhote9717/mongodb-deployment-on-kubernetes-cluster-vi
 sudo vi /etc/selinux/config
 SELINUX=disabled
 
+# set your hostname
+sudo hostnamectl set-hostname master
+sudo reboot
+
 sudo sestatus
 
 
 # Install Docker
-#!/bin/bash
+
 
 # Update the package index
 sudo dnf check-update
@@ -26,10 +30,9 @@ sudo systemctl start docker
 sudo systemctl enable docker
 
 # Verify Docker installation
-docker --version
+sudo systemctl status docker
 
-# set your hostname
-sudo hostnamectl set-hostname master
+
 
 https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 # Set SELinux in permissive mode (effectively disabling it)
@@ -51,7 +54,7 @@ EOF
 # Install kubelet, kubeadm and kubectl:
 
 sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
-sudo yum remove kubelet kubeadm kubectl
+# sudo yum remove kubelet kubeadm kubectl
 (Optional) Enable the kubelet service before running kubeadm:
 
 sudo systemctl enable kubelet
@@ -64,4 +67,12 @@ sudo systemctl status kubelet
 
 # Run it only in master Node
 kubeadm init 
+
+# Install Calico with Kubernetes API datastore, 50 nodes or less
+# Download the Calico networking manifest for the Kubernetes API datastore.
+
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/calico.yaml -O
+
+kubectl apply -f calico.yaml
+
 
