@@ -1,6 +1,11 @@
 https://www.youtube.com/watch?v=mQW3u0bm3VE
 https://phoenixnap.com/kb/kubernetes-mongodb
 
+https://www.youtube.com/watch?v=YLpoKs_e0kA
+
+https://medium.com/@shubhamdhote9717/mongodb-deployment-on-kubernetes-cluster-via-deploymentset-and-statefulset-6ca649894ca7
+
+
 sudo vi /etc/selinux/config
 SELINUX=disabled
 
