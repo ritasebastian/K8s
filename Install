@@ -58,8 +58,12 @@ sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 (Optional) Enable the kubelet service before running kubeadm:
 
 sudo systemctl enable kubelet
-sudo systemctl start kubelet
+sudo free -m
 sudo systemctl restart kubelet
+
+[root@k8s-dev ~]# cat /etc/systemd/system/kubelet.service.d/containerd.conf 
+[Service]
+Environment="KUBELET_EXTRA_ARGS=--runtime-request-timeout=15m --image-service-endpoint=unix:///run/containerd/containerd.sock  --cgroup-driver=systemd"
 
 sudo systemctl status docker
 sudo systemctl status kubelet
