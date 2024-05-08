@@ -1,1 +1,62 @@
 https://www.youtube.com/watch?v=mQW3u0bm3VE
+https://phoenixnap.com/kb/kubernetes-mongodb
+
+sudo vi /etc/selinux/config
+SELINUX=disabled
+
+sudo sestatus
+
+
+# Install Docker
+#!/bin/bash
+
+# Update the package index
+sudo dnf check-update
+
+# Install Docker
+sudo dnf install -y docker
+
+# Start and enable Docker service
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Verify Docker installation
+docker --version
+
+# set your hostname
+sudo hostnamectl set-hostname master
+
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+# Set SELinux in permissive mode (effectively disabling it)
+sudo setenforce 0
+sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+
+# This overwrites any existing configuration in /etc/yum.repos.d/kubernetes.repo
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+EOF
+
+# Install kubelet, kubeadm and kubectl:
+
+sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+sudo yum remove kubelet kubeadm kubectl
+(Optional) Enable the kubelet service before running kubeadm:
+
+sudo systemctl enable kubelet
+sudo systemctl start kubelet
+sudo systemctl restart kubelet
+
+sudo systemctl status docker
+sudo systemctl status kubelet
+
+
+# Run it only in master Node
+kubeadm init 
+
