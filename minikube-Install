@@ -32,5 +32,42 @@ kubectl get pods -A
 
 minikube ssh [ Getting into pods ]
 
+# Install the dashboard
+	
+minikube dashboard
+minikube addons enable ingress
+kubectl proxy --address='0.0.0.0' --accept-hosts='^*$'
+minikube ip
+http://18.246.37.54:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/  
+
+#####
+minikube tunnel &
+
+#### Lab 
+
+Create Kubernetes Deployment and Pods
+kubectl create deployment my-httpd --image=httpd --port=80
+kubectl scale deployment my-httpd --replicas=1
+Check the status of deployment
+kubectl get deployment
+kubectl get deployment -o wide
+kubectl get pod
+kubectl get pod -o wide
+kubectl expose deployment my-httpd --port=8080 --target-port=80 --type=LoadBalancer
+kubectl delete deployment my-httpd
+kubectl delete svc my-httpd
+minikube tunnel &
+curl 10.96.20.192:8080
+[root@ip-172-31-6-235 ~]# kubectl get svc
+NAME         TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)          AGE
+kubernetes   ClusterIP      10.96.0.1      <none>         443/TCP          83m
+my-httpd     LoadBalancer   10.96.20.192   10.96.20.192   8080:32546/TCP   40s
+kubectl port-forward –address 0.0.0.0 svc/my-httpd 32546:8080 &
+curl http://18.246.37.54:32546/
+
+##########
+
+
+
 
 
