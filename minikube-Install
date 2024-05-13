@@ -27,8 +27,10 @@ minikube start --force [ will start by docker  might take little time ]
 
 # Verfication 
 minikube status
+docker ps
 kubectl get pods -A
 
+minikube ssh [ Getting into pods ]
 
 
 
