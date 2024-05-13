@@ -11,8 +11,25 @@ https://medium.com/@shubhamdhote9717/mongodb-deployment-on-kubernetes-cluster-vi
 sudo vi /etc/selinux/config
 SELINUX=disabled
 
+sudo vi /etc/fstab
+/swapfile   none   swap   sw   0   0
+
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+EOF
+
 # set your hostname
 sudo hostnamectl set-hostname master
+sudo hostnamectl set-hostname worker
+# Disable swap
+sudo free -m
+
 sudo reboot
 
 sudo sestatus
@@ -23,6 +40,9 @@ sudo sestatus
 
 # Update the package index
 sudo dnf check-update
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
 
 # Install Docker
 sudo dnf install -y docker
@@ -34,7 +54,7 @@ sudo systemctl enable docker
 # Verify Docker installation
 sudo systemctl status docker
 
-
+https://phoenixnap.com/kb/how-to-install-kubernetes-on-centos
 
 https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 # Set SELinux in permissive mode (effectively disabling it)
@@ -42,16 +62,7 @@ sudo setenforce 0
 sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 
 
-# This overwrites any existing configuration in /etc/yum.repos.d/kubernetes.repo
-cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
-enabled=1
-gpgcheck=1
-gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
-exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
-EOF
+
 
 # Install kubelet, kubeadm and kubectl:
 
@@ -59,26 +70,47 @@ sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 # sudo yum remove kubelet kubeadm kubectl
 (Optional) Enable the kubelet service before running kubeadm:
 
-sudo systemctl enable kubelet
-sudo free -m
-sudo systemctl restart kubelet
+sudo systemctl enable --now kubelet
 
-[root@k8s-dev ~]# cat /etc/systemd/system/kubelet.service.d/containerd.conf 
-[Service]
-Environment="KUBELET_EXTRA_ARGS=--runtime-request-timeout=15m --image-service-endpoint=unix:///run/containerd/containerd.sock  --cgroup-driver=systemd"
 
 sudo systemctl status docker
 sudo systemctl status kubelet
 
 
 # Run it only in master Node
-kubeadm init 
+sudo kubeadm init 
 
-# Install Calico with Kubernetes API datastore, 50 nodes or less
-# Download the Calico networking manifest for the Kubernetes API datastore.
+kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
-curl https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/calico.yaml -O
+kubectl get nodes
+kubectl get nodes -o wide
+kubectl describe nodes
 
-kubectl apply -f calico.yaml
+Ports
+API Server : 6443 HTTP: 8080
+Kubelet: 10250 HTTP: 10255
+Kube-proxy: 10249
+Etcd:  2379 for client connections and 2380 for peer communication.
+DNS Service: 53
+Dashboard:  8443
+Ingress Controller:  80 http and https 443
+
+
+sudo kubeadm reset
+
+sudo systemctl stop docker && sudo systemctl stop kubelet
+sudo rm -rf /etc/kubernetes/
+sudo rm -rf .kube/
+sudo rm -rf /var/lib/kubelet/
+sudo rm -rf /var/lib/cni/
+sudo rm -rf /etc/cni/
+sudo rm -rf /var/lib/etcd/
+sudo yum remove kubelet kubeadm kubectl
+
+Bootstrap K8s cluster via kubeadm:
+
+$ sudo systemctl start docker && sudo systemctl start kubelet
+
+$ sudo kubeadm init ...
 
 
