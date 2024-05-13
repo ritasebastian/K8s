@@ -113,4 +113,7 @@ $ sudo systemctl start docker && sudo systemctl start kubelet
 
 $ sudo kubeadm init ...
 
+sudo kubeadm init --apiserver-advertise-address=172.31.44.219 --pod-network-cidr=172.31.0.0/16
+
+https://github.com/anishrana2001/Kubernetes/tree/main
 
