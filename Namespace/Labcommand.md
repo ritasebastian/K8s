@@ -23,10 +23,10 @@ metadata:
 ## How to check the detailed information about the Namespace?
 
 ```
-kubectl describe ns operation
+kubectl describe ns development
 ```
 ```
-kubectl get ns operation --show-labels
+kubectl get ns development --show-labels
 ```
 
 ## How to create Resource Quota for Namespace?
