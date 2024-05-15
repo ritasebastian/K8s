@@ -63,7 +63,9 @@ curl 10.96.20.192:8080
 NAME         TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)          AGE
 kubernetes   ClusterIP      10.96.0.1      <none>         443/TCP          83m
 my-httpd     LoadBalancer   10.96.20.192   10.96.20.192   8080:32546/TCP   40s
-kubectl port-forward –address 0.0.0.0 svc/my-httpd 32546:8080 &
+kubectl port-forward svc/my-httpd 32591:8080
+
+# kubectl port-forward –address 0.0.0.0 svc/my-httpd 32546:8080 &
 curl http://18.246.37.54:32546/
 
 ##########
