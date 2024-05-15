@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wordpress-deployment
@@ -8,6 +8,10 @@ metadata:
     type: frontend
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+      type: frontend
   template:
     metadata:
       labels:
@@ -16,7 +20,7 @@ spec:
     spec:
       containers:
         - name: wordpress
-          image: wordpress
+          image: wordpress:latest
           ports:
             - containerPort: 80
               name: http-port
@@ -40,4 +44,3 @@ spec:
                 secretKeyRef:
                   name: mariadb-secret
                   key: dbname
-            
