@@ -1,1 +1,27 @@
 https://www.youtube.com/watch?v=WeeZ0aKpa9E
+https://github.com/josedom24/kubernetes/blob/master/unidades/wordpress2.md
+ssh -i "2024-oregan.pem" -L 8081:localhost:36525ec2-user@35.93.220.112
+http://35.93.220.112:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+
+http://18.246.37.54:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+
+1
+http://18.246.37.54:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/#/workloads?namespace=default
+
+kubectl create deployment my-httpd --image=httpd --port=80
+kubectl scale deployment my-httpd --replicas=1
+
+kubectl port-forward --address 0.0.0.0 svc/my-httpd 8080:30865
+
+https://medium.com/@ravipatel.it/deploying-mariadb-on-kubernetes-a-step-by-step-guide-ec2959cc9b1d
+## Monitoring
+https://semaphoreci.com/blog/prometheus-grafana-kubernetes-helm
+https://ghazanfaralidevops.medium.com/kubernetes-monitoring-using-prometheus-grafana-e88a66621253
+https://github.com/devops-CloudComputing/Prometheus_Grafana_For_Devops_Engineers
+
+
+http://18.246.37.54:30865
+
+kubectl get deployment
+
+
