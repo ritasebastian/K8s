@@ -2,8 +2,9 @@
 ## POD yaml file for hostPath volume
 ```
 cat <<EOF>> hostPath-pod.yaml
-kind: Namespace
+---
 apiVersion: v1
+kind: Namespace
 metadata:
   name: core
 ---
@@ -25,6 +26,8 @@ spec:
     - mountPath: /vol1
       name: vol1-hostpath
 EOF
+
+
 ```
 
 ## create pod through yaml file
