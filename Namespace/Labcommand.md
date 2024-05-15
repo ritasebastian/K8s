@@ -9,13 +9,14 @@ kubectl  get ns
 ## How to create Namespace with Yaml file?
 
 ```
-cat > development.yaml
+cat > development.yaml <<EOF
 apiVersion: v1
 kind: Namespace
 metadata:
   name: development
   labels:
     name: production
+EOF
  ```
 ```
 ** kubectl create ns operation**
@@ -52,7 +53,7 @@ kubectl -n operation describe ResourceQuota pods-low
  
 **Pod1**
 ```
-cat > pod-quota1.yaml
+cat > pod-quota1.yaml <<EOF
 apiVersion: v1
 kind: Pod
 metadata:
@@ -69,13 +70,14 @@ spec:
       limits:
         memory: "500Mi"
         cpu: "500m"
-   ```
+EOF
+ ```
    
 
  
 **Pod2**
 ```
-cat > pod-quota2.yaml
+cat > pod-quota2.yaml <<EOF
 apiVersion: v1
 kind: Pod
 metadata:
@@ -92,11 +94,13 @@ spec:
       limits:
         memory: "500Mi"
         cpu: "500m"
+EOF
+
  ```
  
 **Pod3**
 ```
-cat > pod-quota3.yaml 
+cat > pod-quota3.yaml <<EOF
 apiVersion: v1
 kind: Pod
 metadata:
@@ -113,6 +117,8 @@ spec:
       limits:
         memory: "500Mi"
         cpu: "500m"
+EOF
+
  ```
  
 ```
