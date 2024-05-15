@@ -32,16 +32,19 @@ kubectl get ns development --show-labels
 
 ## How to create Resource Quota for Namespace?
 ```
-echo 'apiVersion: v1
+cat > resourcequota.yaml <<EOF
+apiVersion: v1
 kind: ResourceQuota
 metadata:
-  name: pods-low
-  namespace: operation
+    name: pods-low
+    namespace: operation
 spec:
-  hard:
-    cpu: "5"
-    memory: 10Gi
-    pods: "2"' > 1.yaml
+    hard:
+      cpu: "5"
+      memory: 10Gi
+      pods: "2"
+EOF
+
 
 ```
 ```
