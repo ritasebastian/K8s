@@ -39,7 +39,7 @@ minikube dashboard
 minikube addons enable ingress
 kubectl proxy --address='0.0.0.0' --accept-hosts='^*$'
 minikube ip
-http://18.246.37.54:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/  
+http://54.201.127.109:8001/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/  
 
 #####
 minikube tunnel &
