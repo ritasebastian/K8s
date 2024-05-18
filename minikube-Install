@@ -70,7 +70,12 @@ curl http://18.246.37.54:32546/
 
 ##########
 
+Monitoring ( openlens )
+brew install --cask openlens
 
+# add kube config file
+
+cat ~/.kube/config
 
 
 
