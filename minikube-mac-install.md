@@ -71,4 +71,4 @@ kubectl version --client
 By following these steps, you should have Minikube up and running on your Mac, allowing you to run a local Kubernetes cluster for development and testing purposes.
 ```
 
-You can save this content into a file named `minikube-install-mac.md` and use any Markdown viewer or editor to read or edit it.
+
