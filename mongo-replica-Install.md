@@ -1,4 +1,4 @@
-Sure, here is the content converted into a Markdown file, `mongo-replica.md`:
+
 
 ```markdown
 # Setting Up MongoDB Replica Set on Kubernetes
