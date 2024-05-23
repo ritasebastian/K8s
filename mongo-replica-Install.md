@@ -1,4 +1,4 @@
-```markdown
+
 # Setting Up MongoDB Replica Set on Kubernetes
 
 This guide will walk you through the steps to set up a MongoDB replica set on Kubernetes using a StatefulSet and a headless service.
