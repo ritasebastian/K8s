@@ -1,5 +1,3 @@
-
-
 ```markdown
 # Setting Up MongoDB Replica Set on Kubernetes
 
