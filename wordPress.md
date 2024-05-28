@@ -1,7 +1,5 @@
 # Example: Deploying WordPress with MariaDB
 
-You can find all the files we will work with in the [`wordpress`](https://github.com/josedom24/kubernetes/tree/master/ejemplos/wordpress) directory.
-
 We will work in a `namespace` called *wordpress*:
 
 ```sh
@@ -97,16 +95,4 @@ wordpress-ingress   wp.172.22.200.178.nip.io             80        20s
 
 And access the application:
 
-![wp](img/wp1.png)
 
-## Issues We Encounter
-
-These are not actually problems, but consequences of the **ephemeral nature of pods**. When a pod is deleted, its information is lost. Therefore, we may encounter some circumstances:
-
-1. What happens if we delete the MariaDB deployment or the MariaDB pod is deleted and a new one is created? In these circumstances, **the database information is lost** and the installation process will start again.
-2. What happens if we scale the database deployment and have two pods providing the database? On each access to the application, the database query will be balanced between the two pods (**one that has the installation information and another that has no information**), so on consecutive accesses, the application will alternately show and then prompt for WordPress installation.
-3. If we write a post in WordPress and upload an image, that file will be stored in the pod running the application. Therefore, if the pod is deleted, **the static content will be lost**.
-4. If we have a pod with static content (e.g., images) and scale the WordPress deployment to two pods, **one will contain the image, but the other will not**. Therefore, on consecutive accesses to the application, the image will be alternately shown or not shown depending on which pod responds.
-
-To solve these problems, we will explore using volumes in Kubernetes in the following sections.
-```
