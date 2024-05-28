@@ -1,95 +1,112 @@
-# Ejemplo: Desplegando WordPress con MariaDB
+# Example: Deploying WordPress with MariaDB
 
-Puedes encontrar todos los ficheros con los que vamos a trabajar en el directorio [`wordpress`](https://github.com/josedom24/kubernetes/tree/master/ejemplos/wordpress).
+You can find all the files we will work with in the [`wordpress`](https://github.com/josedom24/kubernetes/tree/master/ejemplos/wordpress) directory.
 
-Vamos a trabajar en un `namespace` llamado *wordpress*:
+We will work in a `namespace` called *wordpress*:
 
-    kubectl create -f wordpress-ns.yaml 
-    namespace "wordpress" created
+```sh
+kubectl create -f wordpress-ns.yaml 
+namespace "wordpress" created
+```
 
-## Desplegando la base de datos MariaDB
+## Deploying the MariaDB Database
 
-A continuación vamos a crear los `secrets` necesarios para la configuración de la base de datos, vamos a guardarlo en el fichero `mariadb-secret.yaml`:
+Next, we will create the necessary `secrets` for the database configuration. We will save it in the `mariadb-secret.yaml` file:
 
-    kubectl create secret generic mariadb-secret --namespace=wordpress \
+```sh
+kubectl create secret generic mariadb-secret --namespace=wordpress \
                                 --from-literal=dbuser=user_wordpress \
                                 --from-literal=dbname=wordpress \
                                 --from-literal=dbpassword=password1234 \
                                 --from-literal=dbrootpassword=root1234 \
-                                -o yaml --dry-run > mariadb-secret.yaml
+                                -o yaml --dry-run=client > mariadb-secret.yaml
+kubectl create -f mariadb-secret.yaml 
+secret "mariadb-secret" created
+```
 
+We create the service, which will be of type *ClusterIP*:
 
-    kubectl create -f mariadb-secret.yaml 
-    secret "mariadb-secret" created
+```sh
+kubectl create -f mariadb-srv.yaml 
+service "mariadb-service" created
+```
 
-Creamos el servicio, que será de tipo *ClusterIP*:
+And deploy the application:
 
-    kubectl create -f mariadb-srv.yaml 
-    service "mariadb-service" created
+```sh
+kubectl create -f mariadb-deployment.yaml 
+deployment.apps "mariadb-deployment" created
+```
 
-Y desplegamos la aplicación:
+Check the resources we have created so far:
 
-    kubectl create -f mariadb-deployment.yaml 
-    deployment.apps "mariadb-deployment" created
+```sh
+kubectl get deploy,service,pods -n wordpress
+NAME                                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mariadb-deployment         1         1         1            1           20s
 
-Comprobamos los recursos que hemos creado hasta ahora:
+NAME                      TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+service/mariadb-service   ClusterIP   10.98.24.76   <none>        3306/TCP   20s
 
-    kubectl get deploy,service,pods -n wordpress
-    NAME                                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-    deployment.extensions/mariadb-deployment   1         1         1            1           20s
+NAME                                     READY     STATUS    RESTARTS   AGE
+pod/mariadb-deployment-844c98579-cgp84   1/1       Running   0          20s
+```
 
-    NAME                      TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
-    service/mariadb-service   ClusterIP   10.98.24.76   <none>        3306/TCP   20s
+## Deploying the WordPress Application
 
-    NAME                                     READY     STATUS    RESTARTS   AGE
-    pod/mariadb-deployment-844c98579-cgp84   1/1       Running   0          20s
+First, we create the service:
 
-## Desplegando la aplicación Wordpress
+```sh
+kubectl create -f wordpress-srv.yaml 
+service "wordpress-service" created
+```
 
-Lo primero creamos el servicio:
+And deploy the application:
 
-    kubectl create -f wordpress-srv.yaml 
-    service "wordpress-service" created
+```sh
+kubectl create -f wordpress-deployment.yaml 
+```
 
-Y realizamos el despliegue:
+Check the created resources:
 
-    kubectl create -f wordpress-deployment.yaml 
+```sh
+kubectl get deploy,service,pods -n wordpress
+NAME                                         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mariadb-deployment           1         1         1            1           6m
+deployment.apps/wordpress-deployment         1         1         1            1           25s
 
-Y vemos los recursos creados:
+NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+service/mariadb-service     ClusterIP   10.98.24.76      <none>        3306/TCP                     6m
+service/wordpress-service   NodePort    10.111.158.165   <none>        80:30331/TCP,443:30015/TCP   25s
 
-    kubectl get deploy,service,pods -n wordpress
-    NAME                                         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-    deployment.extensions/mariadb-deployment     1         1         1            1           6m
-    deployment.extensions/wordpress-deployment   1         1         1            1           25s
+NAME                                        READY     STATUS    RESTARTS   AGE
+pod/mariadb-deployment-844c98579-cgp84      1/1       Running   0          6m
+pod/wordpress-deployment-866b7d9fd8-wf5t4   1/1       Running   0          25s
+```
 
-    NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-    service/mariadb-service     ClusterIP   10.98.24.76      <none>        3306/TCP                     6m
-    service/wordpress-service   NodePort    10.111.158.165   <none>        80:30331/TCP,443:30015/TCP   25s
+Finally, create the `ingress` resource that will allow access to the application using a name:
 
-    NAME                                        READY     STATUS    RESTARTS   AGE
-    pod/mariadb-deployment-844c98579-cgp84      1/1       Running   0          6m
-    pod/wordpress-deployment-866b7d9fd8-wf5t4   1/1       Running   0          25s
+```sh
+kubectl create -f wordpress-ingress.yaml 
+ingress.extensions "wordpress-ingress" created
 
-Por último creamos el recurso `ingress` que nos va a permitir el acceso a la aplicación utilizando un nombre:
+kubectl get ingress -n wordpress
+NAME                HOSTS                      ADDRESS   PORTS     AGE
+wordpress-ingress   wp.172.22.200.178.nip.io             80        20s
+```
 
-    kubectl create -f wordpress-ingress.yaml 
-    ingress.extensions "wordpress-ingress" created
-
-    kubectl get ingress -n wordpress
-    NAME                HOSTS                      ADDRESS   PORTS     AGE
-    wordpress-ingress   wp.172.22.200.178.nip.io             80        20s
-
-Y accedemos:
+And access the application:
 
 ![wp](img/wp1.png)
 
-## Problemas que nos encontramos
+## Issues We Encounter
 
-En realidad no son problemas, son la consecuencia de que los **pods son efímeros**, cuando se elimina un pod su información se pierde. Por lo tanto nos podemos encontrar con algunas circunstancias:
+These are not actually problems, but consequences of the **ephemeral nature of pods**. When a pod is deleted, its information is lost. Therefore, we may encounter some circumstances:
 
-1. ¿Qué pasa si eliminamos el despliegue de mariadb?, o, ¿se elimina el pod de mariadb y se crea uno nuevo?. En estas circunstancias **se pierde la información de la base de datos** y el proceso de instalación comenzará de nuevo.
-2. ¿Qué pasa si escalamos el despliegue de la base de datos y tenemos dos pods ofreciendo la base de datos?. En cada acceso a la aplicación se va a balancear la consulta a la base de datos entre los dos pods (**uno que tiene la información de la instalación y otro que que no tiene información**), por lo que en los accesos consecutivos nos va a ir mostrando la aplicación y en el siguiente acceso nos va a decir que hay que instalar el wordpress.
-3. Si escribimos un post en el wordpress y subimos una imagen, ese fichero se va a guardar en el pod que está corriendo la aplicación, por lo tanto si se borra, **se perderá el contenido estático**.
-4. En el caso que tengamos un pods con contenido estático (por ejemplo imágenes) y escalamos el despliegue de wordpress a dos pods, **en uno se encontrará la imagen pero en el otro no**, por lo tanto en los distintos accesos consecutivos que se hagan a la aplicación se ira mostrando o no la imagen según el pod que este respondiendo.
+1. What happens if we delete the MariaDB deployment or the MariaDB pod is deleted and a new one is created? In these circumstances, **the database information is lost** and the installation process will start again.
+2. What happens if we scale the database deployment and have two pods providing the database? On each access to the application, the database query will be balanced between the two pods (**one that has the installation information and another that has no information**), so on consecutive accesses, the application will alternately show and then prompt for WordPress installation.
+3. If we write a post in WordPress and upload an image, that file will be stored in the pod running the application. Therefore, if the pod is deleted, **the static content will be lost**.
+4. If we have a pod with static content (e.g., images) and scale the WordPress deployment to two pods, **one will contain the image, but the other will not**. Therefore, on consecutive accesses to the application, the image will be alternately shown or not shown depending on which pod responds.
 
-Para solucionar estos problemas veremos en los siguientes apartados la utilización de volúmenes en Kubernetes.
+To solve these problems, we will explore using volumes in Kubernetes in the following sections.
+```
