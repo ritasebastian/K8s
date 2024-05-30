@@ -27,6 +27,16 @@ EOF
 # set your hostname
 sudo hostnamectl set-hostname master
 sudo hostnamectl set-hostname worker
+# add /etc/hosts
+35.94.17.99 master
+52.10.228.70 worker
+
+# add /etc/sysctl.conf
+vi /etc/sysctl.conf
+
+net.ipv4.ip_forward = 1
+net.ipv6.conf.all.forwarding = 1
+
 # Disable swap
 sudo free -m
 
@@ -79,6 +89,7 @@ sudo systemctl status kubelet
 
 # Run it only in master Node
 sudo kubeadm init 
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/calico.yaml
 
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
