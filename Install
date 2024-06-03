@@ -8,11 +8,14 @@ https://www.youtube.com/watch?v=KYk2H1Qgd5k  ( tamil k8s )
 https://medium.com/@shubhamdhote9717/mongodb-deployment-on-kubernetes-cluster-via-deploymentset-and-statefulset-6ca649894ca7
 
 
-sudo vi /etc/selinux/config
-SELINUX=disabled
+# Kubernetes sometimes has issues with SELinux. Try disabling it.
+sudo setenforce 0
+sudo sed -i --follow-symlinks 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/sysconfig/selinux
 
-sudo vi /etc/fstab
-/swapfile   none   swap   sw   0   0
+
+# Kubernetes requires swap to be disabled.
+sudo swapoff -a
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
 
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
@@ -23,6 +26,22 @@ gpgcheck=1
 gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
 exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
 EOF
+
+# Kubernetes requires certain kernel parameters to be set. Create a configuration file to ensure they are set correctly.
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+br_netfilter
+EOF
+
+sudo modprobe br_netfilter
+
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+
+sudo sysctl --system
+
 
 # set your hostname
 sudo hostnamectl set-hostname master
@@ -88,9 +107,12 @@ sudo systemctl status kubelet
 
 
 # Run it only in master Node
-sudo kubeadm init 
+# sudo kubeadm init get interip for apiserver-advertise calico network
+sudo kubeadm init --apiserver-advertise-address=172.31.21.148 --pod-network-cidr=192.168.0.0/16
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/calico.yaml
 
+# sudo kubeadm init get interip for apiserver-advertise flannel network
+sudo kubeadm init --apiserver-advertise-address=172.31.44.219 --pod-network-cidr=172.31.0.0/16
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
 kubectl get nodes
