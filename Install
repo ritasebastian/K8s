@@ -142,9 +142,9 @@ sudo yum remove kubelet kubeadm kubectl
 
 Bootstrap K8s cluster via kubeadm:
 
-$ sudo systemctl start docker && sudo systemctl start kubelet
+sudo systemctl start docker && sudo systemctl start kubelet
 
-$ sudo kubeadm init ...
+sudo kubeadm init ...
 
 sudo kubeadm init --apiserver-advertise-address=172.31.44.219 --pod-network-cidr=172.31.0.0/16
 
