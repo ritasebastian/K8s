@@ -121,6 +121,7 @@ sudo systemctl status kubelet
 # Run it only in master Node
 sudo kubeadm config images pull --cri-socket unix:///run/containerd/containerd.sock
 kubeadm init --apiserver-advertise-address=INSTANCE_PRIVATE_IP --pod-network-cidr=192.168.0.0/16 --ignore-preflight-errors=all
+# kubeadm init --apiserver-advertise-address=172.31.31.13 --pod-network-cidr=192.168.0.0/16 --ignore-preflight-errors=all
 # sudo kubeadm init get interip for apiserver-advertise calico network
 sudo kubeadm init --apiserver-advertise-address=172.31.21.148 --pod-network-cidr=192.168.0.0/16
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/calico.yaml
