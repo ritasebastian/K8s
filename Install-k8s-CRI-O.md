@@ -120,3 +120,16 @@ sysctl -w net.ipv4.ip_forward=1
 kubeadm init
 ```
 
+# Install calico
+```bash
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/calico.yaml
+```
+# sudo kubeadm init get interip for apiserver-advertise flannel network
+```bash
+kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+```
+# Get Join Command on Master Node
+# On the master node, run the following command to generate the join command along with a token:
+```bash
+sudo kubeadm token create --print-join-command
+```
