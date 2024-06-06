@@ -133,3 +133,7 @@ kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/
 ```bash
 sudo kubeadm token create --print-join-command
 ```
+# remove the node replace node name
+```bash
+kubectl taint nodes ip-172-31-25-9.us-east-2.compute.internal node-role.kubernetes.io/control-plane:NoSchedule-
+```
