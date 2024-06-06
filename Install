@@ -29,10 +29,12 @@ EOF
 
 # Kubernetes requires certain kernel parameters to be set. Create a configuration file to ensure they are set correctly.
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
 br_netfilter
 EOF
 
 sudo modprobe br_netfilter
+sudo modprobe overlay
 
 sudo tee /etc/modules-load.d/containerd.conf <<EOF
 overlay
