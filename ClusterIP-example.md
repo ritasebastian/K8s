@@ -30,13 +30,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb
+  name: mongodb-service
 spec:
+  type: ClusterIP
   selector:
     app: mongodb
   ports:
   - protocol: TCP
     port: 27017
+    targetPort: 27017
 ```
 
 This YAML file defines a MongoDB pod and a ClusterIP service named `mongodb`.
@@ -62,7 +64,7 @@ kubectl run -i --tty temp-pod --image=mongo:latest --restart=Never -- bash
 Once inside the temporary pod, use the `mongo` client to connect to the MongoDB service:
 
 ```bash
-mongosh mongodb://mongodb:27017
+mongosh mongodb://mongodb-service:27017
 ```
 
 This command connects to the MongoDB service using the ClusterIP (`mongodb`) and the default MongoDB port (`27017`). You should see the MongoDB shell prompt if the connection is successful.
