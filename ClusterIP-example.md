@@ -1,4 +1,4 @@
-## create a MongoDB pod and a ClusterIP service in Kubernetes and then test it, you can follow these steps:
+## Create a MongoDB pod and a ClusterIP service in Kubernetes and then test it, you can follow these steps:
 
 1. **Create the YAML file**: Use a text editor to create a YAML file with the MongoDB pod and the ClusterIP service configurations.
 
