@@ -1,4 +1,4 @@
-To create a MongoDB pod and a ClusterIP service in Kubernetes and then test it, you can follow these steps:
+## create a MongoDB pod and a ClusterIP service in Kubernetes and then test it, you can follow these steps:
 
 1. **Create the YAML file**: Use a text editor to create a YAML file with the MongoDB pod and the ClusterIP service configurations.
 
@@ -62,7 +62,7 @@ kubectl run -i --tty temp-pod --image=mongo:latest --restart=Never -- bash
 Once inside the temporary pod, use the `mongo` client to connect to the MongoDB service:
 
 ```bash
-mongo mongodb://mongodb:27017
+mongosh mongodb://mongodb:27017
 ```
 
 This command connects to the MongoDB service using the ClusterIP (`mongodb`) and the default MongoDB port (`27017`). You should see the MongoDB shell prompt if the connection is successful.
