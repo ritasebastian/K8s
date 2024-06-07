@@ -12,7 +12,8 @@ Here's a detailed guide:
 
 Create a file named `mongodb-clusterip.yaml` and add the following content:
 
-```yaml
+```
+cat <EOF>mongodb-clusterip.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -39,6 +40,7 @@ spec:
   - protocol: TCP
     port: 27017
     targetPort: 27017
+EOF
 ```
 
 This YAML file defines a MongoDB pod and a ClusterIP service named `mongodb`.
