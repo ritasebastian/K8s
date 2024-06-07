@@ -33,9 +33,10 @@ kubectl apply -f nginx-pod.yaml
 
 Next, create a YAML file for the NodePort service.
 
-**nginx-service.yaml**:
+# nginx-service.yaml
 
-```yaml
+```
+cat <<EOF>> nginx-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -49,6 +50,7 @@ spec:
     port: 80
     targetPort: 80
     nodePort: 30080  # You can specify a port in the range 30000-32767, or let Kubernetes choose one for you.
+EOF
 ```
 
 Apply the service configuration:
