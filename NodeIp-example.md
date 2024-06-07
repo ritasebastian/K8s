@@ -4,9 +4,10 @@ Here is an example of deploying an Nginx pod in Kubernetes and exposing it via a
 
 First, create a YAML file for the Nginx pod.
 
-**nginx-pod.yaml**:
+# nginx-pod.yaml
 
-```yaml
+```
+cat <<EOF>> nginx-pod.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -19,6 +20,7 @@ spec:
     image: nginx:latest
     ports:
     - containerPort: 80
+EOF
 ```
 
 Apply the pod configuration:
