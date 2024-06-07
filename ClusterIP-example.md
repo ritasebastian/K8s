@@ -13,7 +13,7 @@ Here's a detailed guide:
 Create a file named `mongodb-clusterip.yaml` and add the following content:
 
 ```
-cat <EOF>mongodb-clusterip.yaml
+cat <<EOF>> mongodb-clusterip.yaml
 apiVersion: v1
 kind: Pod
 metadata:
