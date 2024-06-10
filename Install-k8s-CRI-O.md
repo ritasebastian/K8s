@@ -64,6 +64,7 @@ dnf install -y container-selinux
 
 ```bash
 dnf install -y cri-o kubelet kubeadm kubectl
+sudo systemctl enable --now kubelet
 ```
 
 #### Start CRI-O
