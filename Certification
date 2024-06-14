@@ -1,5 +1,5 @@
 # https://devopscube.com/cka-exam-study-guide/
-To create a BusyBox pod with an `admin` service account using imperative commands in Kubernetes, you will need to follow these steps:
+# Create a busybox pod which executes this command sleep 3600 with the service account admin and verify 
 
 1. **Create the Service Account (if it doesn't already exist):**
 
