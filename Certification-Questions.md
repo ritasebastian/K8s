@@ -1,0 +1,58 @@
+# https://devopscube.com/cka-exam-study-guide/
+# Create a busybox pod which executes this command sleep 3600 with the service account admin and verify 
+
+1. **Create the Service Account (if it doesn't already exist):**
+
+```bash
+kubectl create serviceaccount admin
+```
+
+2. **Create the BusyBox Pod with the Service Account:**
+
+Unfortunately, Kubernetes does not provide a direct way to specify a service account in an imperative command. However, you can use `kubectl run` to create the pod and then patch it to use the service account.
+
+```bash
+kubectl run busybox-sleep --image=busybox --command -- sleep 3600
+kubectl patch pod busybox-sleep -p '{"spec": {"serviceAccountName": "admin"}}'
+```
+
+3. **Verify the Pod Creation:**
+
+```bash
+# Check the status of the pod
+kubectl get pods busybox-sleep -o wide
+
+# Describe the pod to ensure it is using the 'admin' service account
+kubectl describe pod busybox-sleep
+```
+
+### Full Commands:
+
+1. Create the `admin` service account:
+
+```bash
+kubectl create serviceaccount admin
+```
+
+2. Create the `busybox` pod with the `sleep 3600` command:
+
+```bash
+kubectl run busybox-sleep --image=busybox --command -- sleep 3600
+```
+
+3. Patch the pod to use the `admin` service account:
+
+```bash
+kubectl patch pod busybox-sleep -p '{"spec": {"serviceAccountName": "admin"}}'
+```
+
+4. Verify the pod:
+
+```bash
+# Get the pod status
+kubectl get pods busybox-sleep -o wide
+
+# Describe the pod
+kubectl describe pod busybox-sleep
+```
+
