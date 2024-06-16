@@ -1,4 +1,6 @@
 # https://devopscube.com/cka-exam-study-guide/
+https://killercoda.com/login
+
 # Create a busybox pod which executes this command sleep 3600 with the service account admin and verify 
 
 1. **Create the Service Account (if it doesn't already exist):**
