@@ -170,7 +170,6 @@ Note down the ClusterIP, NodePort, and external IP (for LoadBalancer service).
 - **Use Case:** Providing external access to applications via a cloud provider's load balancer.
 - **Drawbacks:** Relies on cloud provider integration, may incur additional costs, and might be slower to provision compared to NodePort or ClusterIP.
 
-Certainly! After creating the Kubernetes services (ClusterIP, NodePort, LoadBalancer) and deploying the NGINX pods as previously outlined, let's proceed to test each service using `curl`.
 
 ### Testing Each Service with `curl`
 
@@ -251,6 +250,4 @@ curl http://123.45.67.89
 
 You should receive the default NGINX welcome page or the expected response from your service.
 
-### Summary
 
-Testing each Kubernetes service type (ClusterIP, NodePort, LoadBalancer) using `curl` ensures that they are correctly configured and accessible within your Kubernetes cluster environment. This approach helps verify connectivity and functionality, ensuring that your applications are reachable and responsive according to their intended deployment and networking configurations. Adjust testing commands and configurations as needed based on your specific deployment requirements and service definitions.
