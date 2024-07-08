@@ -2,12 +2,12 @@ Here are the detailed steps to create an Ubuntu-based Docker image with Nginx, a
 
 ### Step 1: Create Dockerfile and index.html
 
-Create a `Dockerfile` and `index.html` file manually or using `echo` commands as shown previously. Here's an example:
-
 #### Dockerfile
 
 ```dockerfile
-# Use the official Nginx image based on Ubuntu
+mkdir ~/docker-example
+cd ~/docker-example
+cat <<EOF > dockerfile # Use the official Nginx image based on Ubuntu
 FROM nginx:latest
 
 # Copy custom index.html to Nginx default public directory
@@ -18,6 +18,7 @@ EXPOSE 80
 
 # CMD instruction to start Nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]
+EOF
 ```
 
 #### index.html
