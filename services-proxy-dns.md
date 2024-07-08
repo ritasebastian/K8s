@@ -1,6 +1,6 @@
 To demonstrate the use of different types of Kubernetes services (LoadBalancer, ClusterIP, NodePort) with multiple pods, let's go through the steps of creating two pods, applying different services, and discussing their respective use cases and drawbacks.
 
-### Step-by-Step Guide
+### Step-by-Step Guide [start minikube tunnel and minikube service service-name --url if needed enable metalib)
 
 #### 1. Create Namespace
 
