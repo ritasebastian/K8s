@@ -24,6 +24,7 @@ EOF
 #### index.html
 
 ```html
+cat <<EOF > index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,6 +37,7 @@ EOF
     <p>This is a custom index.html page.</p>
 </body>
 </html>
+EOF
 ```
 
 ### Step 2: Build the Docker Image
