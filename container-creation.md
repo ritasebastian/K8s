@@ -8,16 +8,13 @@ Here are the detailed steps to create an Ubuntu-based Docker image with Nginx, a
 mkdir ~/docker-example
 cd ~/docker-example
 cat <<EOF > dockerfile # Use the official Nginx image based on Ubuntu
-FROM nginx:latest
-
-# Copy custom index.html to Nginx default public directory
-COPY index.html /usr/share/nginx/html/index.html
-
-# Expose port 80 to allow external access
+FROM ubuntu:latest
+RUN apt-get -y update && apt-get -y install nginx gettext-base
+COPY index.html /var/www/html/index.html.template
+RUN echo '#!/bin/sh\nexport SERVER_NAME=$(hostname)\nexport DATE_TIME=$(date)\nenvsubst < /var/www/html/index.html.template > /var/www/html/index.nginx-debian.html\nexec nginx -g "daemon off;"' > /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 EXPOSE 80
-
-# CMD instruction to start Nginx in the foreground
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/docker-entrypoint.sh"]
 EOF
 ```
 
@@ -30,11 +27,11 @@ cat <<EOF > index.html
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to My Nginx Server</title>
+    <title>Server Name</title>
 </head>
 <body>
-    <h1>Hello from Nginx!</h1>
-    <p>This is a custom index.html page.</p>
+    <h1>Welcome to NGINX on ${SERVER_NAME}!</h1>
+    <p>Today's Date and Time is ${DATE_TIME}</p>
 </body>
 </html>
 EOF
@@ -79,7 +76,7 @@ docker login
 Tag your local Docker image with your Docker Hub username and repository name:
 
 ```bash
-docker tag my-nginx-image your-docker-hub-username/my-nginx-image:latest
+docker tag my-nginx-image sasebastian/my-nginx-image:latest
 ```
 
 Replace `your-docker-hub-username` with your actual Docker Hub username.
@@ -89,7 +86,7 @@ Replace `your-docker-hub-username` with your actual Docker Hub username.
 Push the tagged image to Docker Hub:
 
 ```bash
-docker push your-docker-hub-username/my-nginx-image:latest
+docker push sasebastian/my-nginx-image:latest
 ```
 
 ### Step 6: Test the Pushed Docker Image
@@ -97,8 +94,8 @@ docker push your-docker-hub-username/my-nginx-image:latest
 Pull the image from Docker Hub to test if it deploys correctly:
 
 ```bash
-docker pull your-docker-hub-username/my-nginx-image:latest
-docker run -d -p 8080:80 --name my-nginx-container-from-hub your-docker-hub-username/my-nginx-image:latest
+docker pull sasebastian/my-nginx-image:latest
+docker run -d -p 8080:80 --name my-nginx-container-from-hub sasebastian/my-nginx-image:latest
 ```
 
 ### Step 7: Verify with curl -I
