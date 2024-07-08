@@ -174,3 +174,11 @@ sudo kubeadm init --apiserver-advertise-address=172.31.44.219 --pod-network-cidr
 
 https://github.com/anishrana2001/Kubernetes/tree/main
 
+https://labs.play-with-k8s.com/
+
+kubeadm init --apiserver-advertise-address $(hostname -i) --pod-network-cidr 10.5.0.0/16
+kubectl apply -f https://raw.githubusercontent.com/cloudnativelabs/kube-router/master/daemonset/kubeadm-kuberouter.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/application/nginx-app.yaml
+kubectl taint nodes node1 node-role.kubernetes.io/control-plane:NoSchedule-
+
+
