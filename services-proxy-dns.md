@@ -1,11 +1,6 @@
-To demonstrate the use of different types of Kubernetes services (LoadBalancer, ClusterIP, NodePort) with multiple pods, let's go through the steps of creating two pods, applying different services, and discussing their respective use cases and drawbacks.
+To demonstrate the use of different types of Kubernetes services (LoadBalancer, ClusterIP, NodePort) with multiple pods applying different services, and discussing their respective use cases and drawbacks.
 
 ### Step-by-Step Guide [start minikube tunnel and minikube service service-name --url if needed enable metalib)
-
-To create a Kubernetes deployment with different service types (NodePort, ClusterIP, LoadBalancer) for the image `sasebastian/my-nginx-image:latest`, and to test them using `curl -I`, `iptables`, and `dig`, follow these steps:
-
-### Step-by-Step Instructions
-
 1. **Create Kubernetes Deployment YAML**
 
    ```bash
