@@ -9,12 +9,12 @@ mkdir ~/docker-example
 cd ~/docker-example
 cat <<EOF > dockerfile # Use the official Nginx image based on Ubuntu
 FROM ubuntu:latest
-RUN apt-get -y update && apt-get -y install nginx gettext-base
-COPY index.html /var/www/html/index.html.template
-RUN echo '#!/bin/sh\nexport SERVER_NAME=$(hostname)\nexport DATE_TIME=$(date)\nenvsubst < /var/www/html/index.html.template > /var/www/html/index.nginx-debian.html\nexec nginx -g "daemon off;"' > /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+RUN apt-get update && apt-get install -y nginx gettext-base
+COPY index-html.sh /tmp/index-html.sh 
+RUN chmod +x /tmp/index-html.sh
+RUN sh /tmp/index-html.sh
 EXPOSE 80
-CMD ["/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
 EOF
 ```
 
@@ -22,18 +22,19 @@ EOF
 
 ```html
 cat <<EOF > index.html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Name</title>
-</head>
-<body>
-    <h1>Welcome to NGINX on ${SERVER_NAME}!</h1>
-    <p>Today's Date and Time is ${DATE_TIME}</p>
-</body>
-</html>
+export index_html=/var/www/html/index.nginx-debian.html
+echo '<!DOCTYPE html>' > $index_html
+echo '<html lang="en">' >> $index_html
+echo '<head>' >> $index_html
+echo '    <meta charset="UTF-8">' >> $index_html
+echo '    <meta name="viewport" content="width=device-width, initial-scale=1.0">' >> $index_html
+echo '    <title>Server Information</title>' >> $index_html
+echo '</head>' >> $index_html
+echo '<body>' >> $index_html
+echo '    <h1>Server Name: '$(hostname)'</h1>' >> $index_html
+echo '    <p>Date and Time: '$(date)'</p>' >> $index_html
+echo '</body>' >> $index_html
+echo '</html>' >> $index_html
 EOF
 ```
 
@@ -47,10 +48,10 @@ docker build -t my-nginx-image .
 
 ### Step 3: Run the Docker Container Locally
 
-After building the image, run it locally to verify it works:
+After building the image, run it locally to verify it works: ( docker ps -a , docker stop , docker rm , docker exec -it )
 
 ```bash
-docker run -d -p 8080:80 --name my-nginx-container my-nginx-image
+docker run -d --name my-container -p 8080:80 my-nginx-image
 ```
 
 ### Step 4: Test the Container using curl -I
