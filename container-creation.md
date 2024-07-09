@@ -23,18 +23,18 @@ EOF
 ```html
 cat <<EOF > index-html.sh
 export index_html=/var/www/html/index.nginx-debian.html
-echo '<!DOCTYPE html>' > $index_html
-echo '<html lang="en">' >> $index_html
-echo '<head>' >> $index_html
-echo '    <meta charset="UTF-8">' >> $index_html
-echo '    <meta name="viewport" content="width=device-width, initial-scale=1.0">' >> $index_html
-echo '    <title>Server Information</title>' >> $index_html
-echo '</head>' >> $index_html
-echo '<body>' >> $index_html
-echo '    <h1>Server Name: '$(hostname)'</h1>' >> $index_html
-echo '    <p>Date and Time: '$(date)'</p>' >> $index_html
-echo '</body>' >> $index_html
-echo '</html>' >> $index_html
+echo '<!DOCTYPE html>' > \$index_html
+echo '<html lang="en">' >> \$index_html
+echo '<head>' >> \$index_html
+echo '    <meta charset="UTF-8">' >> \$index_html
+echo '    <meta name="viewport" content="width=device-width, initial-scale=1.0">' >> \$index_html
+echo '    <title>Server Information</title>' >> \$index_html
+echo '</head>' >> \$index_html
+echo '<body>' >> \$index_html
+echo '    <h1>Server Name: \$(hostname)</h1>' >> \$index_html
+echo '    <p>Date and Time: \$(date)</p>' >> \$index_html
+echo '</body>' >> \$index_html
+echo '</html>' >> \$index_html
 EOF
 ```
 
