@@ -96,7 +96,7 @@ Pull the image from Docker Hub to test if it deploys correctly:
 
 ```bash
 docker pull sasebastian/my-nginx-image:latest
-docker run -d -p 8080:80 --name my-nginx-container-from-hub sasebastian/my-nginx-image:latest
+docker run -d --name my-container -p 8080:80 sasebastian/my-nginx-image:latest
 ```
 
 ### Step 7: Verify with curl -I
