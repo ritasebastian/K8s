@@ -2,146 +2,173 @@ To demonstrate the use of different types of Kubernetes services (LoadBalancer, 
 
 ### Step-by-Step Guide [start minikube tunnel and minikube service service-name --url if needed enable metalib)
 
-#### 1. Create Namespace
+To create a Kubernetes deployment with different service types (NodePort, ClusterIP, LoadBalancer) for the image `sasebastian/my-nginx-image:latest`, and to test them using `curl -I`, `iptables`, and `dig`, follow these steps:
 
-Let's start by creating a namespace for our resources:
+### Step-by-Step Instructions
 
-```sh
-kubectl create namespace my-namespace
-```
+1. **Create Kubernetes Deployment YAML**
 
-#### 2. Create Pod YAMLs
+   ```bash
+   cat <<EOF > nginx-deployment.yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: nginx-deployment
+     labels:
+       app: nginx
+   spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: nginx
+     template:
+       metadata:
+         labels:
+           app: nginx
+       spec:
+         containers:
+         - name: nginx
+           image: sasebastian/my-nginx-image:latest
+           ports:
+           - containerPort: 80
+   EOF
+   ```
 
-Create two Pod YAML files (`pod1.yaml` and `pod2.yaml`) for NGINX pods using `echo`:
+2. **Create Kubernetes Services YAML**
 
-```sh
-# pod1.yaml
-cat <<EOF > pod1.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod1
-  namespace: my-namespace
-spec:
-  containers:
-  - name: nginx
-    image: nginx
-    ports:
-    - containerPort: 80
-EOF
-```
+   **NodePort Service:**
 
-```sh
-# pod2.yaml
-cat <<EOF > pod2.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: pod2
-  namespace: my-namespace
-spec:
-  containers:
-  - name: nginx
-    image: nginx
-    ports:
-    - containerPort: 80
-EOF
-```
+   ```bash
+   cat <<EOF > nodeport-service.yaml
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: nginx-nodeport
+   spec:
+     selector:
+       app: nginx
+     ports:
+     - protocol: TCP
+       port: 80
+       targetPort: 80
+     type: NodePort
+   EOF
+   ```
 
-Apply the Pod configurations:
+   **ClusterIP Service:**
 
-```sh
-kubectl apply -f pod1.yaml
-kubectl apply -f pod2.yaml
-```
+   ```bash
+   cat <<EOF > clusterip-service.yaml
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: nginx-clusterip
+   spec:
+     selector:
+       app: nginx
+     ports:
+     - protocol: TCP
+       port: 80
+       targetPort: 80
+     type: ClusterIP
+   EOF
+   ```
 
-#### 3. Create Services YAMLs
+   **LoadBalancer Service:**
 
-##### a. ClusterIP Service
+   ```bash
+   cat <<EOF > loadbalancer-service.yaml
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: nginx-loadbalancer
+   spec:
+     selector:
+       app: nginx
+     ports:
+     - protocol: TCP
+       port: 80
+       targetPort: 80
+     type: LoadBalancer
+   EOF
+   ```
 
-Create a ClusterIP service (`service-clusterip.yaml`) using `echo`:
+3. **Apply YAML Files to Kubernetes Cluster**
 
-```sh
-cat <<EOF > service-clusterip.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: my-service-clusterip
-  namespace: my-namespace
-spec:
-  selector:
-    app: nginx
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
-  type: ClusterIP
-EOF
-```
+   ```bash
+   kubectl apply -f nginx-deployment.yaml
+   kubectl apply -f nodeport-service.yaml
+   kubectl apply -f clusterip-service.yaml
+   kubectl apply -f loadbalancer-service.yaml
+   ```
 
-Apply the ClusterIP service:
+4. **Test with `curl -I`, `iptables`, and `dig`**
 
-```sh
-kubectl apply -f service-clusterip.yaml
-```
+   - **NodePort Service:**
 
-##### b. NodePort Service
+     ```bash
+     # Get NodePort assigned
+     NODE_PORT=$(kubectl get svc nginx-nodeport -o jsonpath='{.spec.ports[0].nodePort}')
 
-Create a NodePort service (`service-nodeport.yaml`) using `echo`:
+     # Test with curl
+     curl -I localhost:$NODE_PORT
 
-```sh
-cat <<EOF > service-nodeport.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: my-service-nodeport
-  namespace: my-namespace
-spec:
-  selector:
-    app: nginx
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
-    nodePort: 30080  # Specify a specific port or let Kubernetes allocate one
-  type: NodePort
-EOF
-```
+     # Test with iptables
+     sudo iptables -A INPUT -p tcp --dport $NODE_PORT -j DROP
+     ```
 
-Apply the NodePort service:
+   - **ClusterIP Service:**
 
-```sh
-kubectl apply -f service-nodeport.yaml
-```
+     ```bash
+     # Get ClusterIP assigned
+     CLUSTER_IP=$(kubectl get svc nginx-clusterip -o jsonpath='{.spec.clusterIP}')
 
-##### c. LoadBalancer Service
+     # Test with curl (assuming app runs on a pod within the cluster)
+     curl -I $CLUSTER_IP:80
 
-Create a LoadBalancer service (`service-loadbalancer.yaml`) using `echo`:
+     # Test with dig
+     dig $CLUSTER_IP
+     ```
 
-```sh
-cat <<EOF > service-loadbalancer.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: my-service-loadbalancer
-  namespace: my-namespace
-spec:
-  selector:
-    app: nginx
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 80
-  type: LoadBalancer
-EOF
-```
+   - **LoadBalancer Service:**
 
-Apply the LoadBalancer service:
+     ```bash
+     # Get LoadBalancer IP (assuming it's provisioned)
+     LB_IP=$(kubectl get svc nginx-loadbalancer -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-```sh
-kubectl apply -f service-loadbalancer.yaml
-```
+     # Test with curl
+     curl -I $LB_IP
 
+     # Test with dig
+     dig $LB_IP
+     ```
+
+### Pros and Cons of Each Service Type
+
+- **NodePort:**
+  - **Pros:**
+    - Exposes the service on a static port across the nodes.
+    - Allows external access to the service directly via node IP and NodePort.
+  - **Cons:**
+    - Not suitable for production load balancing.
+    - Exposes a port on every node, which might not be desired for security reasons.
+
+- **ClusterIP:**
+  - **Pros:**
+    - Provides internal cluster-only IP, not exposed outside of the cluster.
+    - Ideal for communication between different services within the cluster.
+  - **Cons:**
+    - Not accessible externally without additional configuration (like using an Ingress).
+
+- **LoadBalancer:**
+  - **Pros:**
+    - Automatically provisions an external load balancer (if supported by cloud provider) and assigns an external IP.
+    - Provides an easy way to expose services to external users.
+  - **Cons:**
+    - Costly and might not be available in all environments (e.g., local development clusters).
+    - May have slower provisioning times compared to other service types.
+
+These steps will help you create and test different Kubernetes service types for your `sasebastian/my-nginx-image:latest` deployment effectively.
 #### 4. Verify Services and Endpoints
 
 Check services and endpoints:
