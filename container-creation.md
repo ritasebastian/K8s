@@ -21,7 +21,7 @@ EOF
 #### index.html
 
 ```html
-cat <<EOF > index.html
+cat <<EOF > index-html.sh
 export index_html=/var/www/html/index.nginx-debian.html
 echo '<!DOCTYPE html>' > $index_html
 echo '<html lang="en">' >> $index_html
