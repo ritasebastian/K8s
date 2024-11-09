@@ -7,14 +7,22 @@ Here are the detailed steps to create an Ubuntu-based Docker image with Nginx, a
 ```dockerfile
 mkdir ~/docker-example
 cd ~/docker-example
-cat <<EOF > dockerfile # Use the official Nginx image based on Ubuntu
-FROM ubuntu:latest
-RUN apt-get update && apt-get install -y nginx gettext-base
-COPY index-html.sh /tmp/index-html.sh 
-RUN chmod +x /tmp/index-html.sh
-RUN sh /tmp/index-html.sh
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+cat <<EOF > Dockerfile
+# Use a specific version of the NGINX image (e.g., latest or 1.24.0)
+FROM nginx:1.24.0
+
+# Install envsubst, a tool to replace variables in the HTML file
+RUN apt-get update && apt-get install -y gettext-base
+
+# Copy the custom HTML file to the default NGINX HTML directory
+COPY index.html /usr/share/nginx/html/index.html
+
+# Define environment variables for hostname and date
+ENV HOSTNAME "\$(hostname)"
+ENV DATE "\$(date)"
+
+# Replace variables in the HTML file at container startup
+CMD envsubst < /usr/share/nginx/html/index.html > /usr/share/nginx/html/index.html && nginx -g 'daemon off;'
 EOF
 ```
 
