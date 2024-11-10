@@ -1,6 +1,6 @@
 Here are the detailed steps to create an Ubuntu-based Docker image with Nginx, a custom `index.html`, build it, run it locally, push it to Docker Hub, and test it using `curl -I`:
 
-### Step 1: Create Dockerfile and index.html
+### Step 1: Create Dockerfile 
 
 #### Dockerfile
 
@@ -30,24 +30,7 @@ CMD ["nginx"]
 EOF
 ```
 
-#### index.html
 
-```html
-cat <<EOF > index.html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Custom NGINX Test Page</title>
-</head>
-<body>
-    <h1>Welcome to the Custom NGINX Server</h1>
-    <p>This is a test page served by a custom NGINX image.</p>
-    <p>Server Name: ${HOSTNAME}</p>
-    <p>Date and Time: ${DATE}</p>
-</body>
-</html>
-EOF
-```
 
 ### Step 2: Build the Docker Image
 
